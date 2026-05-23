@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="site-title">Yükleniyor...</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg-color: #0a0a12;
+            --card-bg: #111122;
+            --neon-blue: #00f0ff;
+            --neon-pink: #ff007f;
+            --text-color: #e2e8f0;
+            --text-muted: #8a99ad;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 18, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 240, 255, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .logo span {
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--neon-blue);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px var(--neon-blue);
+        }
+
+        .nav-link:hover, .nav-link:hover::after {
+            color: var(--neon-blue);
+            width: 100%;
+        }
+
+        .btn-discord-nav {
+            background: linear-gradient(45deg, #5865F2, #404eed);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 15px rgba(88, 101, 242, 0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-discord-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(88, 101, 242, 0.7);
+        }
+
+        .menu-toggle {
+            display: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 20px 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .hero-text h1 .gradient-blue {
+            color: var(--neon-blue);
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+        }
+
+        .hero-text h1 .gradient-pink {
+            color: var(--neon-pink);
+            text-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+        }
+
+        .hero-text p {
+            font-size: 20px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 15px 35px;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 5px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 2px solid var(--neon-blue);
+            box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2), 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 30px var(--neon-blue);
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--neon-pink);
+            border: 2px solid var(--neon-pink);
+            box-shadow: inset 0 0 10px rgba(255, 0, 127, 0.2), 0 0 15px rgba(255, 0, 127, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: var(--neon-pink);
+            color: #000;
+            box-shadow: 0 0 30px var(--neon-pink);
+            transform: translateY(-3px);
+        }
+
+        .hero-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(0,240,255,0.15) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse 4s infinite alternate;
+        }
+
+        .bot-avatar {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 4px solid var(--neon-blue);
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.4);
+            animation: float 6s ease-in-out infinite;
+            object-fit: cover;
+        }
+
+        .stats-section {
+            background: rgba(17, 17, 34, 0.6);
+            border-top: 1px solid rgba(0, 240, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            padding: 60px 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 42px;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-card p {
+            color: var(--neon-blue);
+            font-size: 18px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .features-section {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 36px;
+            text-transform: uppercase;
+            margin-bottom: 60px;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: var(--neon-pink);
+            margin: 15px auto 0 auto;
+            box-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 0, 127, 0.1);
+            padding: 40px 30px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 5px 25px rgba(0, 240, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            color: var(--neon-blue);
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        .feature-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .faq-section {
+            padding: 60px 20px 120px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .faq-item {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question {
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 20px;
+            text-transform: uppercase;
+            user-select: none;
+        }
+
+        .faq-question:hover { color: var(--neon-blue); }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+            padding: 0 25px;
+            color: var(--text-muted);
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 1000px;
+            padding-bottom: 25px;
+            transition: max-height 0.4s cubic-bezier(1, 0, 1, 0);
+        }
+
+        .faq-icon { transition: transform 0.3s ease; color: var(--neon-pink); }
+        .faq-item.active .faq-icon { transform: rotate(180deg); color: var(--neon-blue); }
+
+        footer {
+            background: #05050b;
+            border-top: 2px solid rgba(255, 0, 127, 0.2);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .footer-links { display: flex; gap: 25px; }
+        .footer-link { color: var(--text-muted); text-decoration: none; font-size: 16px; font-weight: 600; text-transform: uppercase; transition: color 0.3s ease;}
+        .footer-link:hover { color: var(--neon-pink); }
+
+        .signature {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 15px;
+            letter-spacing: 1px;
+            color: #fff;
+            margin-top: 10px;
+            padding: 8px 20px;
+            border: 1px dashed rgba(0, 240, 255, 0.3);
+            background: rgba(0, 240, 255, 0.02);
+            display: inline-block;
+        }
+        .signature span { color: var(--neon-blue); font-weight: 700; text-shadow: 0 0 8px var(--neon-blue); }
+
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
+        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.5; } 100% { transform: scale(1.05); opacity: 1; } }
+
+        @media (max-width: 968px) {
+            .hero-wrapper { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+            .hero-text h1 { font-size: 42px; }
+            .hero-buttons { justify-content: center; }
+            .features-grid { grid-template-columns: 1fr 1fr; }
+            .stats-container { grid-template-columns: 1fr 1fr; }
+            .menu-toggle { display: block; }
+            .nav-menu {
+                position: fixed; top: 73px; left: -100%; width: 100%; height: calc(100vh - 73px);
+                background: var(--bg-color); flex-direction: column; padding: 40px 20px; gap: 30px;
+                transition: left 0.4s ease; border-top: 1px solid rgba(0, 240, 255, 0.1);
+            }
+            .nav-menu.active { left: 0; }
+        }
+        @media (max-width: 576px) { .features-grid { grid-template-columns: 1fr; } .stats-container { grid-template-columns: 1fr; } .bot-avatar { width: 220px; height: 220px; } }
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <header id="main-header">
+        <div class="nav-container">
+            <a href="#home" class="logo" id="nav-logo-text">YÜKLENİYOR...</a>
+            <div class="menu-toggle" id="mobile-menu-btn"><i class="fa-solid fa-bars"></i></div>
+            <ul class="nav-menu" id="nav-links-wrapper">
+                <li><a href="#home" class="nav-link">Ana Sayfa</a></li>
+                <li><a href="#features" class="nav-link">Özellikler</a></li>
+                <li><a href="#faq" class="nav-link">S.S.S.</a></li>
+                <li><a href="#" target="_blank" id="nav-discord-btn" class="btn-discord-nav"><i class="fa-brands fa-discord"></i> Sunucuya Katıl</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="hero-wrapper">
+            <div class="hero-text">
+                <h1 id="hero-main-title">Yükleniyor...</h1>
+                <p id="hero-description">Yükleniyor...</p>
+                <div class="hero-buttons">
+                    <a href="#" target="_blank" id="invite-btn-1" class="btn-primary"><i class="fa-solid fa-plus"></i> Botu Ekle</a>
+                    <a href="#features" class="btn-secondary"><i class="fa-solid fa-wand-magic-sparkles"></i> Özellikler</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="" alt="Bot Avatar" id="bot-avatar-img" class="bot-avatar">
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="stats-container" id="stats-wrapper">
+        </div>
+    </section>
+
+    <section class="features-section" id="features">
+        <h2 class="section-title">Neden Biz?</h2>
+        <div class="features-grid" id="features-wrapper">
+        </div>
+    </section>
+
+    <section class="faq-section" id="faq">
+        <h2 class="section-title">Sıkça Sorulan Sorular</h2>
+        <div class="faq-container" id="faq-wrapper">
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="#home" class="footer-link">Ana Sayfa</a>
+                <a href="#features" class="footer-link">Özellikler</a>
+                <a href="#faq" class="footer-link">S.S.S</a>
+            </div>
+            <div class="signature">
+                Enes tarafından yapılmıştır © 2026 Tüm Hakları Saklıdır.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const BOT_CONFIG = {
+            botIsmi: "Synthetix",
+            botUzantisi: ".DEV",
+            sloganMaviKisim: "Sunucunuzu Gelişmiş Alt Yapı",
+            sloganPembeKisim: "İle Uçuşa Geçirin",
+            botAciklamasi: "Topluluğunuzun güvenliğini en üst düzeye çıkaran tam koruma modülleri, gelişmiş moderation komutları ve kesintisiz müzik sistemi sunan yeni nesil bir Discord botudur.",
+            botAvatarURL: "https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png",
+            botDavetLinki: "https://discord.com",
+            sunucuDavetLinki: "https://discord.com",
+            
+            istatistikler: [
+                { deger: "2,540", isim: "Toplam Sunucu" },
+                { deger: "1.4M", isim: "Kullanıcı Korunuyor" },
+                { deger: "99.9%", isim: "Uptime Oranı" },
+                { deger: "340K", isim: "Kayıtlı Komut" }
+            ],
+
+            ozellikler: [
+                { ikon: "fa-shield-halved", baslik: "Gelişmiş Guard Sistemi", aciklama: "Sağlam webhook yöneticileri, rol/kanal koruma modülleri ve anlık raid engelleme mimarisiyle sunucunuz tehditlere karşı korunur." },
+                { ikon: "fa-bolt", baslik: "Ultra Hızlı Yanıt", aciklama: "En optimize sunucularda barındırılan altyapımız sayesinde slash komutlarına verilen yanıt süreleri milisaniyeler seviyesindedir." },
+                { ikon: "fa-music", baslik: "Kusursuz Müzik", aciklama: "Ses bozulmaları, takılmalar veya gecikmeler olmadan yüksek kaliteli müzik çalma deneyimini doğrudan odanıza getirin." }
+            ],
+
+            sss: [
+                { soru: "Bot tamamen ücretsiz mi?", cevap: "Evet, botun temel yönetim, guard sistemi ve müzik modülleri tamamen ücretsizdir." },
+                { soru: "Verilerimiz güvende mi?", cevap: "Kullanıcı verileriniz şifrelenmiş veritabanlarımızda güvenle tutulur ve üçüncü şahıslarla asla paylaşılmaz." },
+                { soru: "Guard sistemi nasıl aktif edilir?", cevap: "Botu sunucunuza ekledikten sonra slash komutlarını kullanarak paneli tek tıkla aktif edebilirsiniz." }
+            ]
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            try {
+                document.getElementById('site-title').innerText = `${BOT_CONFIG.botIsmi} | Discord Bot Paneli`;
+                document.getElementById('nav-logo-text').innerHTML = `${BOT_CONFIG.botIsmi}<span>${BOT_CONFIG.botUzantisi}</span>`;
+                document.getElementById('hero-main-title').innerHTML = `${BOT_CONFIG.sloganMaviKisim} <span class="gradient-pink">${BOT_CONFIG.sloganPembeKisim}</span>`;
+                document.getElementById('hero-description').innerText = BOT_CONFIG.botAciklamasi;
+                
+                const avatar = document.getElementById('bot-avatar-img');
+                avatar.src = BOT_CONFIG.botAvatarURL;
+                avatar.onerror = () => { 
+                    avatar.src = "https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png";
+                };
+
+                document.getElementById('nav-discord-btn').href = BOT_CONFIG.sunucuDavetLinki;
+                document.getElementById('invite-btn-1').href = BOT_CONFIG.botDavetLinki;
+
+                const statsWrapper = document.getElementById('stats-wrapper');
+                statsWrapper.innerHTML = BOT_CONFIG.istatistikler.map(st => `
+                    <div class="stat-card">
+                        <h3>${st.deger}</h3>
+                        <p>${st.isim}</p>
+                    </div>
+                `).join('');
+
+                const featuresWrapper = document.getElementById('features-wrapper');
+                featuresWrapper.innerHTML = BOT_CONFIG.ozellikler.map(f => `
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fa-solid ${f.ikon}"></i></div>
+                        <h3>${f.baslik}</h3>
+                        <p>${f.aciklama}</p>
+                    </div>
+                `).join('');
+
+                const faqWrapper = document.getElementById('faq-wrapper');
+                faqWrapper.innerHTML = BOT_CONFIG.sss.map(s => `
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>${s.soru}</span>
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">${s.cevap}</div>
+                    </div>
+                `).join('');
+
+                document.querySelectorAll('.faq-question').forEach(question => {
+                    question.addEventListener('click', () => {
+                        const item = question.parentElement;
+                        document.querySelectorAll('.faq-item').forEach(otherItem => {
+                            if (otherItem !== item) otherItem.classList.remove('active');
+                        });
+                        item.classList.toggle('active');
+                    });
+                });
+
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const navLinksWrapper = document.getElementById('nav-links-wrapper');
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinksWrapper.classList.toggle('active');
+            mobileMenuBtn.querySelector('i').className = navLinksWrapper.classList.contains('active') ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+        });
+
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.color = Math.random() > 0.5 ? '#00f0ff' : '#ff007f';
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
+                if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            for (let i = 0; i < 60; i++) { particlesArray.push(new Particle()); }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update(); particlesArray[i].draw();
+                for (let j = i; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x;
+                    const dy = particlesArray[i].y - particlesArray[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = particlesArray[i].color === '#00f0ff' ? 'rgba(0, 240, 255, 0.04)' : 'rgba(255, 0, 127, 0.04)';
+                        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles(); animateParticles();
+    </script>
+</body>
+</html>
